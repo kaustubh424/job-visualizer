@@ -55,7 +55,7 @@
 
     function displayJobList() {
       const listDiv = document.getElementById('jobList');
-      listDiv.innerHTML = jobs.map(job => \`\${job.id} (D:\${job.deadline}, P:\${job.profit})\`).join(" | ");
+      listDiv.innerHTML = jobs.map(job => `${job.id} (D:${job.deadline}, P:${job.profit})`).join(" | ");
     }
 
     function scheduleJobs() {
@@ -85,15 +85,15 @@
 
       resultJobs.forEach((job, i) => {
         if (job) {
-          jobHtml += \`<div class="job scheduled">\${job.id}<br>Profit: \${job.profit}</div>\`;
+          jobHtml += `<div class="job scheduled">${job.id}<br>Profit: ${job.profit}</div>`;
         } else {
-          jobHtml += \`<div class="job unscheduled">Empty</div>\`;
+          jobHtml += `<div class="job unscheduled">Empty</div>`;
         }
       });
 
       document.getElementById("jobs").innerHTML = jobHtml;
       document.getElementById("result").innerHTML =
-        \`Total Profit: <strong>Rs. \${totalProfit}</strong>\`;
+        `Total Profit: <strong>Rs. ${totalProfit}</strong>`;
     }
   </script>
 </body>
