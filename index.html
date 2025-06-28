@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Job Scheduling Visualizer</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 2rem; background: #f9f9f9; }
+    .job { display: inline-block; margin: 1rem; padding: 1rem; border-radius: 8px; background: #e0f7fa; border: 2px solid #00796b; min-width: 80px; }
+    .scheduled { background: #a5d6a7; border-color: #2e7d32; }
+    .unscheduled { background: #ef9a9a; border-color: #c62828; }
+    #result { margin-top: 2rem; font-size: 1.2rem; }
+    input, button { padding: 0.5rem; margin: 0.3rem; border-radius: 5px; border: 1px solid #ccc; }
+    button { background-color: #00796b; color: white; cursor: pointer; }
+    button:hover { background-color: #004d40; }
+  </style>
+</head>
+<body>
+  <h1>Interactive Job Scheduling System (Greedy Algorithm)</h1>
+
+  <div>
+    <input type="text" id="jobId" placeholder="Job ID (e.g. A)" maxlength="1">
+    <input type="number" id="deadline" placeholder="Deadline (e.g. 2)">
+    <input type="number" id="profit" placeholder="Profit (e.g. 100)">
+    <button onclick="addJob()">Add Job</button>
+    <button onclick="scheduleJobs()">Schedule Jobs</button>
+  </div>
+
+  <h3>Entered Jobs:</h3>
+  <div id="jobList"></div>
+
+  <div id="jobs"></div>
+  <div id="result"></div>
+
+  <script>
+    let jobs = [];
+
+    function addJob() {
+      const id = document.getElementById('jobId').value.trim().toUpperCase();
+      const deadline = parseInt(document.getElementById('deadline').value);
+      const profit = parseInt(document.getElementById('profit').value);
+
+      if (!id || isNaN(deadline) || isNaN(profit)) {
+        alert("Please enter valid job details.");
+        return;
+      }
+
+      jobs.push({ id, deadline, profit });
+      document.getElementById('jobId').value = '';
+      document.getElementById('deadline').value = '';
+      document.getElementById('profit').value = '';
+
+      displayJobList();
+    }
+
+    function displayJobList() {
+      const listDiv = document.getElementById('jobList');
+      listDiv.innerHTML = jobs.map(job => \`\${job.id} (D:\${job.deadline}, P:\${job.profit})\`).join(" | ");
+    }
+
+    function scheduleJobs() {
+      if (jobs.length === 0) {
+        alert("Please add jobs first.");
+        return;
+      }
+
+      jobs.sort((a, b) => b.profit - a.profit);
+
+      const n = jobs.length;
+      const slot = Array(n).fill(false);
+      const resultJobs = Array(n).fill(null);
+      let totalProfit = 0;
+      let jobHtml = "";
+
+      jobs.forEach((job) => {
+        for (let j = Math.min(n, job.deadline) - 1; j >= 0; j--) {
+          if (!slot[j]) {
+            slot[j] = true;
+            resultJobs[j] = job;
+            totalProfit += job.profit;
+            break;
+          }
+        }
+      });
+
+      resultJobs.forEach((job, i) => {
+        if (job) {
+          jobHtml += \`<div class="job scheduled">\${job.id}<br>Profit: \${job.profit}</div>\`;
+        } else {
+          jobHtml += \`<div class="job unscheduled">Empty</div>\`;
+        }
+      });
+
+      document.getElementById("jobs").innerHTML = jobHtml;
+      document.getElementById("result").innerHTML =
+        \`Total Profit: <strong>Rs. \${totalProfit}</strong>\`;
+    }
+  </script>
+</body>
+</html>
